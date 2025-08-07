@@ -54,7 +54,7 @@ This script performs a one-sided Z-test for proportions with a significance leve
 ### Methodology
 
 - **Null Hypothesis (H₀)**: The conversion rate of B is equal to A (rate_B − rate_A = 0).
-- **Alternative Hypothesis (H₁)**: The conversion rate of B is better than A (rate_B − rate_A > 0).
+- **Alternative Hypothesis (H₁)**: The conversion rate of B is greater than A (rate_B − rate_A > 0).
 
 The Z-test calculates a Z-statistic and a corresponding p-value, which represents the probability of observing the data if H₀ were true.
 
