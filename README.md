@@ -1,106 +1,94 @@
-# Metropolis-Hastings: A Theory and Implementation Overview
+# Metropolis-Hastings MCMC for A/B Testing 📊
 
-This project explores the **Metropolis-Hastings (M-H) algorithm** by combining a summary of Siddhartha Chib and Edward Greenberg’s paper _“Understanding the Metropolis-Hastings Algorithm”_ with an implementation of the algorithm in R.
+This project provides a complete implementation of a **Metropolis-Hastings MCMC** (Markov Chain Monte Carlo) sampler from scratch. Its purpose is to demonstrate a **Bayesian approach** to A/B testing and compare it to a classical **frequentist approach**. The script is structured to be both a functional tool for A/B test analysis and a clear educational resource for understanding the core mechanics of MCMC.
 
-## Summary of the Metropolis-Hastings Algorithm
+***
 
-This section summarizes the core ideas of the M-H algorithm as presented by Chib and Greenberg (1995).
+## Project Overview
 
-### Goal of the Algorithm
+With this tool, you can:
+* Simulate A/B test data with specified true conversion rates.
+* Analyze the simulated data using a traditional **frequentist Z-test** for proportions.
+* Implement and run a **Metropolis-Hastings algorithm** to perform a Bayesian analysis.
+* Generate samples from the posterior distribution to compute key metrics like posterior means and credible intervals.
+* Visualize the MCMC chain's convergence, posterior distributions, and the joint posterior to assess the results.
+* Directly compare the conclusions drawn from both the frequentist and Bayesian methodologies.
 
-The Metropolis-Hastings algorithm is designed to **simulate samples from complex multivariate probability distributions**, especially when direct sampling is impractical. It constructs a Markov Chain whose limiting distribution converges to the desired target distribution.
+***
 
----
+## Comparison of Approaches
 
-### The Algorithm
+### Frequentist Approach
+* **Method**: Uses a classical statistical **Z-test for proportions**.
+* **Hypothesis**: Tests a null hypothesis ($H_0$) like $H_0: \text{rate}_B - \text{rate}_A \leq 0$ against an alternative hypothesis ($H_1$).
+* **Output**: Provides a **p-value** and a binary decision to either accept or reject the null hypothesis.
+* **Philosophy**: Assumes true parameters are fixed and unknown. The focus is on the probability of the data given the null hypothesis.
+* **Interpretation**: "If the null hypothesis is true, what's the probability of seeing this data?"
 
-Given a target distribution π(x) we want to sample from:
+### Bayesian Approach
+* **Method**: Uses **Markov Chain Monte Carlo (MCMC)** to sample from the posterior distribution.
+* **Formula**: Computes the posterior: $P(\theta_A, \theta_B \mid \text{data}) \propto P(\text{data} \mid \theta_A, \theta_B) \times P(\theta_A, \theta_B)$.
+* **Output**: Provides **posterior means**, **credible intervals**, and direct probabilities like $P(\theta_B > \theta_A \mid \text{data})$.
+* **Philosophy**: Treats parameters as random variables and focuses on the probability of the parameters given the observed data.
+* **Interpretation**: "Given this data, what's the probability that $\theta_B$ is greater than $\theta_A$?"
 
-1. **Initialize** the Markov Chain with an arbitrary value `X[1]`.
-2. For each iteration `i`, do the following:
-   - Generate a **proposal** `Y` from a candidate-generating distribution `q(Y | X[i])`.
-   - Sample `U ~ Uniform(0,1)`.
-   - Compute the **acceptance ratio**:
+***
 
-     \[
-     \alpha = \min\left(1, \frac{\pi(Y) q(X[i] \mid Y)}{\pi(X[i]) q(Y \mid X[i])}\right)
-     \]
+## Key Concepts
 
-   - If `U ≤ α`, accept the proposal: `X[i+1] ← Y`.
-   - Otherwise, reject it: `X[i+1] ← X[i]`.
+* **Frequentist**: Employs hypothesis testing, p-values, and confidence intervals to make decisions.
+* **Bayesian**: Focuses on posterior distributions, credible intervals, and direct probabilities.
+* **MCMC**: A class of algorithms that use Markov Chains to sample from complex probability distributions.
+* **Metropolis-Hastings**: A specific MCMC algorithm that uses an acceptance-rejection rule to construct a chain that converges to the target distribution.
+* **A/B Testing**: The process of comparing two versions of a product or experience to determine which one performs better.
 
-3. After enough iterations, the samples in `X` approximate the target distribution.
+### The Value of the Bayesian Approach
+The Bayesian approach offers a richer and more intuitive understanding of A/B test results compared to traditional frequentist methods.
 
----
+* **Intuitive Probabilities**: Provides direct, actionable probabilities (e.g., "There is a 97% probability that Group B has a higher conversion rate than Group A"). This is often easier for non-statisticians to understand and act upon.
+* **Uncertainty Quantification**: Bayesian credible intervals give a natural sense of parameter uncertainty (e.g., "there is a 95% probability that the true conversion rate lies within this range").
+* **Incorporating Prior Knowledge**: It allows you to explicitly include prior information, which can be crucial for small sample sizes.
 
-### Why It Works: Reversibility
+***
 
-The key theoretical justification is **reversibility**: the idea that the Markov process moves between states `X` and `Y` at equal rates. This ensures the **target distribution is invariant** under the M-H transition kernel.
+## Algorithm Overview
 
-Reversibility guarantees that under mild conditions (e.g., irreducibility and aperiodicity), the Markov chain converges to the correct distribution.
+The Metropolis-Hastings algorithm is at the core of the Bayesian analysis in this project.
 
----
+* **Target**: The goal is to sample from the posterior distribution $P(\theta_A, \theta_B \mid \text{data})$.
+* **Method**: A Markov Chain is constructed that converges to this target distribution.
+* **Proposal**: New parameter values are proposed using a "random walk" with a symmetric normal distribution centered on the current parameters.
+* **Acceptance**: A new set of parameters is accepted or rejected based on the acceptance ratio: $\alpha = \min(1, \frac{\pi(\theta_{\text{proposed}})}{\pi(\theta_{\text{current}})})$, where $\pi$ is the unnormalized posterior.
+* **Result**: The algorithm generates a set of samples that approximate the shape of the posterior distribution.
 
-### Choosing a Proposal Distribution
+***
 
-The proposal distribution `q(Y | X)` plays a major role in the **efficiency** of the algorithm. The paper discusses the trade-off involved:
+## Usage
 
-- A **large spread** in the proposal leads to low acceptance rates.
-- A **small spread** leads to high acceptance, but slow exploration of the distribution.
+To run the script and perform the A/B test analysis:
 
-As a rule of thumb, an acceptance rate between **0.23 and 0.50** is often considered efficient.
+1.  **Dependencies**: Ensure you have the required libraries installed:
+    ```bash
+    pip install numpy matplotlib scipy statsmodels
+    ```
+2.  **Execution**: Run the Python script directly. The `main()` function is configured to:
+    * Generate synthetic data.
+    * Run the frequentist test.
+    * Execute the Metropolis-Hastings MCMC simulation.
+    * Analyze and visualize the results.
+3.  **Configuration**: You can adjust key parameters within the `main()` function to explore different scenarios:
+    * `true_rate_A`, `true_rate_B`: The true conversion rates for the simulation.
+    * `n_A`, `n_B`: The number of visitors for each group.
+    * `iterations`: The number of MCMC simulation steps.
+    * `proposal_std`: The standard deviation for the MCMC random walk, which can be tuned to optimize the acceptance rate.
 
----
+***
 
-### Application: Metropolis-Hastings as an Acceptance-Rejection Method
+## Future Improvements
 
-The paper also shows how M-H can improve the classical **acceptance-rejection method**, which usually requires a well-chosen blanketing distribution (i.e., an envelope over the target distribution). M-H removes this constraint by **adjusting the sampling probabilities via the acceptance ratio**, allowing us to sample without finding a bounding function.
-
----
-
-## 💻 Implementation in R
-
-As a practical exercise, I implemented the Metropolis-Hastings algorithm in R to sample from a posterior distribution based on bacterial count data.
-
-- The **prior** is a Gamma distribution: `Gamma(α = 0.7, β = 0.01)`
-- The **data** represent bacterial counts across three levels of dilution.
-- The **likelihood** is modeled using a custom function reflecting the observed count data.
-
-We use a **Gamma proposal distribution** centered at the current sample with tuned parameters to achieve a reasonable acceptance rate.
-
-### Sampling Code
-
-The core implementation is in [`mcmc_sampler.R`](./mcmc_sampler.R). It includes:
-- The likelihood function
-- Posterior computation
-- Proposal generation
-- Metropolis-Hastings loop
-- Trace and histogram plots
-
----
-
-## 📈 Example Results
-
-Below are two plots generated by the script:
-
-- **Trace Plot**: Shows how the sampler explores the parameter space.
-- **Posterior Histogram**: Approximates the target posterior distribution of θ.
-
-<p align="center">
-  <img src="plots/trace_plot.png" width="45%" />
-  <img src="plots/posterior_histogram.png" width="45%" />
-</p>
-
----
-
-## Key Takeaways
-
-- The Metropolis-Hastings algorithm is a powerful MCMC tool for simulating from complex distributions.
-- Reversibility is the theoretical backbone that guarantees convergence.
-- Proposal tuning is crucial for balancing exploration and efficiency.
-- M-H can be applied in real-world problems where blanketing distributions are hard to construct.
-
----
+* **Dynamic Prior Specification**: Implement a user-friendly way to specify different prior distributions (e.g., Beta priors with user-defined parameters) instead of the default uninformative prior.
+* **Automated Convergence Diagnostics**: Integrate automated diagnostics like the Geweke or Gelman-Rubin tests to automatically detect when the MCMC chain has converged, rather than relying on a fixed burn-in period.
+* **Model Expansion**: Extend the model to handle more complex scenarios, such as A/B/n testing or including covariates to analyze segmented data.
 
 ## Reference
 
