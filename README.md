@@ -1,4 +1,4 @@
-# Frequentist vs. Bayesian A/B Testing
+# Data-Driven Decision Making in A/B Testing: Contrasting Bayesian and Frequentist Approaches
 
 This project provides a comprehensive comparison of two major statistical paradigms—Frequentist and Bayesian—applied to a common business problem: A/B testing. The primary goal is to not only demonstrate how each approach works but also to provide a hands-on implementation of the Metropolis-Hastings algorithm from scratch to shed light on how modern Bayesian inference is performed.
 
