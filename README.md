@@ -88,6 +88,8 @@ This script uses a Metropolis-Hastings MCMC sampler to approximate the posterior
 - **95% Credible Interval (Group B)**: (8.96%, 12.81%)
 - **Probability that B > A**: 68.95%
 
+![Results](Bayesian.png)
+
 **Conclusion**: The Bayesian analysis concludes that there is a 68.95% probability that Group B has a higher true conversion rate than Group A. This provides a more nuanced and intuitive result than the binary "reject/fail to reject" conclusion of the frequentist test. The results also show that our posterior means are very close to the true simulated rates, indicating that our custom Metropolis-Hastings sampler is working correctly.
 
 ## Key Results and Comparison
